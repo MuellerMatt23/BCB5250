@@ -1,0 +1,88 @@
+---
+title: "PCA_Lab"
+author: "Matt Mueller"
+date: "2024-04-18"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, echo = FALSE}
+options(warn = -1)
+suppressMessages(library("factoextra"))
+suppressMessages(library("FactoMineR"))
+```
+
+```{r, echo = FALSE}
+library("factoextra")
+library("FactoMineR")
+library(ggpubr)
+library(RColorBrewer)
+```
+
+```{r}
+data <- read.csv("C:/Users/13145/Downloads/data.csv", row.names=1)
+
+pca.data <- PCA(data[,-1], scale.unit = TRUE, graph = FALSE)
+
+plot1 <- fviz_eig(pca.data, addlabels = TRUE, ylim = c(0, 70))
+
+print(plot1)
+
+```
+
+
+## Q1 
+### 81.7% of the variations are found in PC1 and PC2.
+
+```{r}
+plot2 <- fviz_pca_var(pca.data, col.var = "cos2",
+             gradient.cols = c("#FFCC00", "#CC9933", "#660033", "#330033"),
+             repel = TRUE)
+
+print(plot2)
+
+pca.data <- PCA(t(data[,-1]), scale.unit = TRUE, graph = FALSE)
+
+a <- fviz_pca_ind(pca.data, col.ind="cos2", 
+                  gradient.cols=c("#FFCC00", "#CC9933", "#660033", "#330033"),
+                                  repel=TRUE)
+plot3 <- ggpar(a, 
+      title = "Principal Component Analysis",
+      xlab = "PC1", ylab = "PC2",
+      legend.title = "Cos2", legend.position = "top",
+      ggtheme = theme_minimal())
+
+print(plot3)
+      
+```
+
+```{r}
+pca.data <- PCA(data[,-1], scale.unit = TRUE,ncp = 2, graph = FALSE)
+
+data$lineage <- as.factor(data$lineage)
+
+nb.cols <- 3
+
+mycolors <- colorRampPalette(brewer.pal(3, "Set1"))(nb.cols)
+
+a <- fviz_pca_ind(pca.data, col.ind=data$lineage,
+                  palette = mycolors, addEllipses = TRUE)
+
+plot4 <- ggpar(a, 
+      title = "Principal Component Analysis",
+      xlab = "PC1", ylab = "PC2",
+      legend.title = "Cell Type", legend.position = "top",
+      ggtheme = theme_minimal())
+
+print(plot4)
+```
+
+
+## Q2 
+###  EPI cells - DPPA5, IFITM1, MT1X, UPP1
+###  PE cells - APOA1
+###  TE cells - S100A16, KRT8, KRT18
+###  If these genes are highly expressed in an unknown cell type, we can conclude that the expression profile of the unknown cell matches the expression profile of the known cell type. Therefore, we can infer the cell type of the unknown cell by its expression profile.
