@@ -17,7 +17,7 @@ def interleave_fastq(forward_file, reverse_file, output_file):
         print("Error: File Not Found.")
     # raise an exception if one or more of the files are not in fastq format
     except ValueError:
-        print("File not in FASTQ format."
+        print("File not in FASTQ format.")
         
 
 
